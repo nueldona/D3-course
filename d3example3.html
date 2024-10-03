@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <!-- <script src="/Final/d3.js"></script> -->
+  <script>
+    // d3 functions to set data
+    const kg_per_pounds = 0.45;
+    const meter_per_inch = 0.0254;
+
+    let container = d3.select("#container");
+    d3.csv("data.csv").then(dataLoaded);
+
+    function dataLoaded(clients) {
+      showData(clients);
+    }
+    function showData(clients) {
+      for (const iterator of clients) {
+        write(`${iterator.Name}, ${iterator.Weight}`);
+      }
+      write("---------");
+      let sum = d3.sum(clients, (d) => d.Weight);
+      write("Sum:" + sum);
+
+      let mean = d3.mean(clients, (d) => d.Weight);
+      write("Mean:" + mean);
+
+      let extent = d3.extent(clients, (d) => d.Weight);
+      // both minimum and maximum
+      write("Extent:" + extent);
+
+      let minimum = d3.min(clients, (d) => d.Weight);
+      write("Min:" + minimum);
+
+      let maximum = d3.max(clients, (d) => d.Weight);
+      write("Max:" + maximum);
+    }
+    function write(text) {
+      container.append("div").text(text);
+    }
+  </script>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <main>
+    <div class="container">
+      <h1 id="page_header">Testing D3 Course</h1>
+      <p class="update para_one">So, see here that my header has an ID and this ID is page header,</p>
+      <p class="update">Now, this is the code that I need to select my header, but it's easier for me to deal with if I associated that to a variable. </p>
+      <ul>
+        <li>this is the first li</li>
+        <li>this is the second li</li>
+      </ul>
+      <div>
+        <img src="https://picsum.photos/id/4/400/400" alt="lorem images" />
+        <p style="font-size: medium;" class="img_para">this is an image</p>
+      </div>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script>
+    // selecting elements
+    // let selected_header = d3.select(".container").select("#page_header")
+    // let selected_para = d3.selectAll("p")
+    // console.log(selected_header.node().innerText)
+    // console.log(selected_para.nodes())
+    
+    // updating text
+    // let first_para = d3.select(".para_one").text("this is the first para")
+    // let second_para = d3.select(".para_one").html("<em>this is the second para</em>")
+
+    // appending elements
+    // d3.select("ul").append("li").text("this is the first li")
+    // d3.select("ul").append("li").text("this is the second li")
+
+    // removing elements
+    // d3.select("ul").select("li").remove()
+    // d3.select("ul").selectAll("li").remove()
+
+
+    // // practical example for elemnts
+    // const lists = d3.select("ul").selectAll("li")
+    // function count() {
+    //   const count = lists.size()
+    //   return count
+    // }
+    // function add() {
+    //   let c = count();
+    //   d3.select("ul").append("li").text("this is the " + c + " li")
+    // }
+    // function remove() {
+    //   // remove the second li
+    //   d3.select("ul").select("li:nth-child(2)").remove()
+
+    //   // remove the last li
+    //   d3.select("ul").select("li:last-child").remove()
+    // }
+    // function removeAll() {
+    //   lists.remove()
+    // }
+
+    // practical example of properties
+    const image = d3.select("img")
+    const image_text = d3.select(".img_para")
+    function update(id=5) {
+      // update the image
+      image.attr("src", `https://picsum.photos/id/${id}/400/400`)
+
+      // get the image
+      image.attr("src")
+    }
+    function updateTextStyle() {
+      // update the text style
+      image_text.style("font-size", "x-large")
+      image_text.style("color", "red")
+
+      // get the text style
+      image_text.style("font-size")
+      image_text.style("color")
+    }
+
+  </script>
+</body>
+</html>

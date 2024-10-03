@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // Fetch the GDP data
+      fetch(
+        "https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/GDP-data.json"
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          // Parse the data
+          const gdpData = data.data;
+
+          // Create the chart
+          const svgWidth = 800;
+          const svgHeight = 400;
+          const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+          const chartWidth = svgWidth - margin.left - margin.right;
+          const chartHeight = svgHeight - margin.top - margin.bottom;
+
+          // Append SVG container to the HTML body
+          const svg = d3
+            .select("body")
+            .append("svg")
+            .attr("width", svgWidth)
+            .attr("height", svgHeight);
+
+          // Append a group element for the chart
+          const chart = svg
+            .append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+          // Create scales for x-axis and y-axis
+          const xScale = d3
+            .scaleBand()
+            .domain(gdpData.map((d) => d[0]))
+            .range([0, chartWidth])
+            .padding(0.1);
+
+          const yScale = d3
+            .scaleLinear()
+            .domain([0, d3.max(gdpData, (d) => d[1])])
+            .range([chartHeight, 0]);
+
+          // Create x-axis and y-axis
+          const xAxis = d3.axisBottom(xScale);
+          const yAxis = d3.axisLeft(yScale);
+
+          // Append x-axis to the chart
+          chart
+            .append("g")
+            .attr("id", "x-axis")
+            .attr("transform", `translate(0, ${chartHeight})`)
+            .call(xAxis);
+
+          // Append y-axis to the chart
+          chart.append("g").attr("id", "y-axis").call(yAxis);
+
+          // Append bars to the chart
+          chart
+            .selectAll(".bar")
+            .data(gdpData)
+            .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", (d) => xScale(d[0]))
+            .attr("y", (d) => yScale(d[1]))
+            .attr("width", xScale.bandwidth())
+            .attr("height", (d) => chartHeight - yScale(d[1]))
+            .attr("data-date", (d) => d[0])
+            .attr("data-gdp", (d) => d[1]);
+
+          // Tooltip
+          const tooltip = d3
+            .select("body")
+            .append("div")
+            .attr("id", "tooltip")
+            .style("opacity", 0);
+
+          // Mouseover event
+          chart.selectAll(".bar").on("mouseover", (event, d) => {
+            tooltip.transition().duration(200).style("opacity", 0.9);
+            tooltip.html(`Date: ${d[0]}`);
+          });
+        });
+    </script>
+  </body>
+</html>

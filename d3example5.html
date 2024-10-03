@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button onclick="addClient()">Add</button>
+    <button onclick="removeClient()">Remove</button>
+    <div id="container"></div>
+  </body>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
+  <script src="/Final/d3.js"></script>
+  <script>
+    let container = d3.select("#container");
+    let count = 1;
+    let clients = [
+      {
+        name: "client0",
+      },
+    ];
+    function addClient() {
+      clients.push({ name: "client" + count });
+      count++;
+      showData(clients);
+    }
+    function removeClient() {
+      if (clients.length > 0) {
+        clients = clients.slice(0, -1);
+        count -= 1;
+        showData(clients);
+      }
+    }
+    function showData(params) {
+      // how value is structured in d3 "Enter (new), Updated (updated), Exit (delete)"
+      let join = container.selectAll("div").data(params);
+      // add new data
+      join
+        .enter()
+        .append("div")
+        .text((d) => d.name + " - New")
+      // remove data that has been deleted
+      join.exit().remove()
+      // update old data
+      join.text((d) => d.name + ": Updated")
+      console.log(count)
+    }
+    showData(clients);
+  </script>
+</html>

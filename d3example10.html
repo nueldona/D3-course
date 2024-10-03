@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
+  <script src="/Final/d3.js"></script>
+  <body>
+    <svg id="container" height="300" width="500">
+      <g id="body" transform="translate(150,150)"></g>
+    </svg>
+    <script>
+      let body = d3.select("#body");
+      d3.csv("/Pie-and-Donut-Charts/initial/data.csv").then(showData);
+      function showData(data) {
+        let bodyHeight = 200;
+        let bodyWidth = 400;
+
+        data = data.map((d) => ({
+          country: d.country,
+          sales: +d.sales,
+        }));
+
+        // set the pie
+        let pie = d3.pie().value((d) => d.sales);
+
+        // create a color scale using scale ordinal and set the range to d3 scheme category and also set the domain to the country
+        let colorScale = d3
+          .scaleOrdinal()
+          .range(d3.schemeCategory10)
+          .domain(data.map((d) => d.country));
+        // console.log(colorScale("US"));
+
+        // create arc, if you set inner radius to 0 you will create a piechart but if you give specific value you create a donut chart
+        let arc = d3.arc().outerRadius(bodyHeight / 2)
+        .innerRadius(0);
+
+        // select all arc in the body and set the pie data
+        let g = body.selectAll(".arc").data(pie(data)).enter().append("g");
+
+        g.append("path")
+          .attr("d", arc)
+          .attr("fill", (d) => {
+            return colorScale(d.data.country);
+          });
+      }
+    </script>
+  </body>
+</html>

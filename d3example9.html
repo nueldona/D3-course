@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .line {
+        fill: none;
+        stroke: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <svg
+      id="container"
+      height="350"
+      width="500"
+      style="border: solid 1px black"
+    >
+      <g id="body" style="transform: translate(50px, 10px)"></g>
+    </svg>
+  </body>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
+  <script src="/Final/d3.js"></script>
+  <script>
+    // setting axes and annotations
+    let body = d3.select("#body");
+    d3.csv("Line_Chart/Initial/data.csv").then(showData);
+
+    function showData(clients) {
+      let bodyHeight = 200;
+      let bodyWidth = 400;
+
+      // convert date and price to number and js date and also return object
+      clients = clients.map((d) => ({
+        date: new Date(d.date),
+        price: +d.price,
+      }));
+
+      // finding max price
+      let max = d3.max(clients, (d) => d.price);
+
+      // setting y scales
+      let yScale = d3.scaleLinear().range([bodyHeight, 0]).domain([0, max]);
+      body.append("g").call(d3.axisLeft(yScale));
+
+      // setting x scales
+      let xScale = d3
+        .scaleTime()
+        .range([0, bodyWidth])
+        .domain(d3.extent(clients, (d) => d.date));
+      body
+        .append("g")
+        .attr("transform", "translate(0,  " + bodyHeight + ")")
+        .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%b")))
+        
+      // create a line 
+      let valueLine = d3.line().x(d => xScale(d.date)).y(d => yScale(d.price)).defined(d => !!d.price)
+
+      body.append("path").datum(clients).attr("d", valueLine).attr("class", "line")
+    }
+  </script>
+</html>

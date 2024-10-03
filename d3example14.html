@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
+    <script src="/Final/d3.js"></script>
+  </head>
+  <body>
+    <svg id="container" height="400" width="600">
+      <g id="body" transform="translate(0,0)"></g>
+    </svg>
+    <script>
+      // adding additional marks to your map
+      let body = d3.select("#body");
+      Promise.all([
+        d3.csv("/Choropleth_Map/Initial_2/data.csv"),
+        d3.json("/Choropleth_Map/Initial/countries.geo.json"),
+      ]).then(showData);
+      function showData(datasources) {
+        let [data, mapInfo] = datasources;
+        let bodyHeight = 500;
+        let bodyWidth = 500;
+
+        let projection = d3
+          .geoMercator()
+          .scale(100)
+          .translate([bodyWidth / 2, bodyHeight / 2]);
+
+        let path = d3.geoPath().projection(projection);
+        body
+          .selectAll("path")
+          .data(mapInfo.features)
+          .enter()
+          .append("path")
+          .attr("d", (d) => path(d))
+          .attr("stroke", "#999")
+          .attr("fill", "#eee");
+
+        body
+          .selectAll("circle")
+          .data(data)
+          .enter()
+          .append("circle")
+          .attr("r", 2)
+          .attr("fill", "#0055AA")
+          .style("opacity", 0.3)
+          .attr("cx", (d) => projection([+d.Latitude, +d.Longitude])[0])
+          .attr("cy", (d) => projection([+d.Latitude, +d.Longitude])[1])
+
+      }
+    </script>
+  </body>
+</html>

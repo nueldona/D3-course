@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <svg id="container" height="250" width="450" style="border: solid 1px black">
+      <g id="body" style="transform:translate(50px,10px)"></g>
+      <g id="yAxis"></g>
+      <g id="xAxis"></g>
+    </svg>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <!-- <script src="/Final/d3.js"></script> -->
+  <script>
+    // setting axes and annotations 
+    let body = d3.select("#body");
+    d3.csv("data.csv").then(showData);
+
+    function showData(clients) {
+      // select all rects in the body
+      let join = body.selectAll("rect").data(clients);
+      // finding max weight
+      let max = d3.max(clients, (d) => d.Weight);
+      // setting scales
+      let widthScale = d3.scaleLinear().range([0, 300]).domain([0, max]);
+      // setting position scale
+      let positionScale = d3
+        .scaleBand()
+        .range([0, 200])
+        .domain(clients.map((d) => d.Name))
+        .padding(0.1);
+      // adding data rects or presenting data
+      join
+        .enter()
+        .append("rect")
+        .style("fill", "#7AA2E3")
+        .style("stroke", "white")
+        .style("width", (d) => widthScale(d.Weight))
+        .style("height", positionScale.bandwidth())
+        .style("y", (d) => positionScale(d.Name));
+      // setting axes and annotations
+      let xAxis = d3.axisBottom(widthScale).ticks(5).tickFormat(d => d + " lb");
+      d3.select("#xAxis").attr("transform", "translate(50,210)").call(xAxis);
+      let yAxis = d3.axisLeft(positionScale);
+      d3.select("#yAxis").attr("transform", "translate(50,10)").call(yAxis);
+    }
+  </script>
+</html>

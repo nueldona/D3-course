@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .links line {
+        stroke: black;
+      }
+    </style>
+  </head>
+  <body>
+    <svg id="container" height="300" width="500">
+      <g id="body" transform="translate(0,0)"></g>
+    </svg>
+  </body>
+  <script src="/Network_visualization/Initial/d3.js"></script>
+  <script>
+    let body = d3.select("#body");
+    d3.json("/Network_visualization/Initial/data.json").then(showData);
+
+    const createElements = (data) => {
+      // create the nodes and links and connect to svg
+      let nodes = body
+        .append("g")
+        .attr("class", "nodes")
+        .selectAll("circle")
+        .data(data.nodes)
+        .enter()
+        .append("circle")
+        .attr("r", 5)
+        .attr("fill", "#0055AA")
+        .style("opacity", 0.3);
+
+      let links = body
+        .append("g")
+        .attr("class", "links")
+        .selectAll("line")
+        .data(data.links)
+        .enter()
+        .append("line");
+    };
+
+    const updateElement = () => {
+      // set the nodes #that is the circles with is circle dimension
+      d3.select(".nodes")
+        .selectAll("circle")
+        .attr("cx", (d) => d.x)
+        .attr("cy", (d) => d.y);
+
+        // set where the line start and end #that is the line connecting the nodes together 
+      d3.select(".links")
+        .selectAll("line")
+        .attr("x1", (d) => d.source.x)
+        .attr("y1", (d) => d.source.y)
+        .attr("x2", (d) => d.target.x)
+        .attr("y2", (d) => d.target.y);
+    };
+    function showData(data) {
+      let bodyHeight = 400;
+      let bodyWidth = 400;
+
+      createElements(data);
+      // set simulation behavior and forces
+      let simulation = d3
+        .forceSimulation()
+        .force(
+          "link",
+          d3.forceLink().id((d) => d.id)
+        )
+        .force("charge", d3.forceManyBody())
+        .force("center", d3.forceCenter(bodyWidth / 2, bodyHeight / 2));
+
+      // to set the nodes
+      simulation.nodes(data.nodes).on("tick", updateElement);
+
+      // to link the nodes to its corresponding nodes
+      simulation.force("link").links(data.links);
+    }
+  </script>
+</html>

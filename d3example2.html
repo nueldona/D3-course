@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
+  <script src="/Final/d3.js"></script>
+  <script>
+    // d3 function to load data
+
+    const kg_per_pounds = 0.45;
+    const meter_per_inch = 0.0254;
+
+    let container = d3.select("#container");
+    d3.csv("data.csv").then(dataLoaded);
+
+    function dataLoaded(clients) {
+      clients = clients.map((d) => {
+        d.BMI = getBMI(d);
+        return d;
+      });
+      showData(clients);
+    }
+    function showData(clients) {
+      for (const iterator of clients) {
+        write(`${iterator.Name}, ${iterator.BMI} `);
+      }
+      write("-------------");
+      meanData(clients)
+    }
+    function write(text) {
+      container.append("div").text(text);
+    }
+    function getBMI(client) {
+      let weight_in_kg = client.Weight * kg_per_pounds;
+      let height_in_meter = client.Height * meter_per_inch;
+      let BMI = weight_in_kg / height_in_meter / 100;
+      return BMI;
+    }
+    function meanData(clients) {
+      let sum = clients.reduce((a, b) => { return a + b.BMI}, 0)
+      write(`Mean: ${ sum / clients.length }`)
+    }
+  </script>
+</html>
